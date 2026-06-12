@@ -1,0 +1,63 @@
+{
+  "people": {
+    "el hombre": "мужчина",
+    "la mujer": "женщина",
+    "el niño": "мальчик",
+    "la niña": "девочка",
+    "el amigo / la amiga": "друг / подруга",
+    "la familia": "семья",
+    "el padre": "папа",
+    "la madre": "мама",
+    "el hermano": "брат",
+    "la hermana": "сестра",
+    "el abuelo": "дедушка",
+    "la abuela": "бабушка",
+    "el médico": "врач",
+    "la profesora": "учительница",
+    "el estudiante": "студент"
+  },
+
+  "places": {
+    "la escuela": "школа",
+    "la universidad": "университет",
+    "el hospital": "больница",
+    "la tienda": "магазин",
+    "el restaurante": "ресторан",
+    "el hotel": "отель",
+    "la oficina": "офис",
+    "el banco": "банк",
+    "el parque": "парк",
+    "el aeropuerto": "аэропорт",
+    "la ciudad": "город",
+    "el país": "страна",
+    "el mundo": "мир"
+  },
+
+  "foodAndDrinks": {
+    "la manzana": "яблоко",
+    "el plátano": "банан",
+    "la naranja": "апельсин",
+    "el pan": "хлеб",
+    "el arroz": "рис",
+    "la carne": "мясо",
+    "el pescado": "рыба",
+    "la leche": "молоко",
+    "el agua": "вода",
+    "el té": "чай",
+    "el café": "кофе",
+    "el vino": "вино",
+    "el queso": "сыр",
+    "el azúcar": "сахар",
+    "la sal": "соль"
+  },
+
+  "animals": {
+    "el perro": "собака",
+    "el gato": "кошка",
+    "el pájaro": "птица",
+    "el caballo": "лошадь",
+    "la vaca": "корова",
+    "el oso": "медведь",
+    "el lobo": "волк"
+  }
+}

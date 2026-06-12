@@ -1,0 +1,113 @@
+{
+  "A1": {
+    "vocab": [
+      {"id": "a1-v01", "question": "house",    "answer": "casa"},
+      {"id": "a1-v02", "question": "water",    "answer": "agua"},
+      {"id": "a1-v03", "question": "dog",      "answer": "perro"},
+      {"id": "a1-v04", "question": "cat",      "answer": "gato"},
+      {"id": "a1-v05", "question": "book",     "answer": "libro"},
+      {"id": "a1-v06", "question": "man",      "answer": "hombre"},
+      {"id": "a1-v07", "question": "woman",    "answer": "mujer"},
+      {"id": "a1-v08", "question": "boy",      "answer": "niño"},
+      {"id": "a1-v09", "question": "girl",     "answer": "niña"},
+      {"id": "a1-v10", "question": "friend",   "answer": "amigo"},
+      {"id": "a1-v11", "question": "mother",   "answer": "madre"},
+      {"id": "a1-v12", "question": "father",   "answer": "padre"},
+      {"id": "a1-v13", "question": "brother",  "answer": "hermano"},
+      {"id": "a1-v14", "question": "sister",   "answer": "hermana"},
+      {"id": "a1-v15", "question": "table",    "answer": "mesa"},
+      {"id": "a1-v16", "question": "chair",    "answer": "silla"},
+      {"id": "a1-v17", "question": "bread",    "answer": "pan"},
+      {"id": "a1-v18", "question": "milk",     "answer": "leche"},
+      {"id": "a1-v19", "question": "car",      "answer": "coche"},
+      {"id": "a1-v20", "question": "street",   "answer": "calle"}
+    ],
+    "sentences": [
+      {"id": "a1-s01", "construction": "affirmative",
+       "elements": ["como", "yo", "manzanas"],
+       "correct_order": ["yo", "como", "manzanas"]},
+      {"id": "a1-s02", "construction": "affirmative",
+       "elements": ["es", "casa", "la", "grande"],
+       "correct_order": ["la", "casa", "es", "grande"]},
+      {"id": "a1-s03", "construction": "negative",
+       "elements": ["bebo", "no", "leche", "yo"],
+       "correct_order": ["yo", "no", "bebo", "leche"]},
+      {"id": "a1-s04", "construction": "interrogative",
+       "elements": ["?", "estás", "cómo"],
+       "correct_order": ["cómo", "estás", "?"]},
+      {"id": "a1-s05", "construction": "affirmative",
+       "elements": ["amigo", "mi", "se", "llama", "Pablo"],
+       "correct_order": ["mi", "amigo", "se", "llama", "Pablo"]}
+    ]
+  },
+  "A2": {
+    "vocab": [
+      {"id": "a2-v01", "question": "to travel",     "answer": "viajar"},
+      {"id": "a2-v02", "question": "city",          "answer": "ciudad"},
+      {"id": "a2-v03", "question": "weather",       "answer": "tiempo"},
+      {"id": "a2-v04", "question": "to wait",       "answer": "esperar"},
+      {"id": "a2-v05", "question": "morning",       "answer": "mañana"}
+    ],
+    "sentences": [
+      {"id": "a2-s01", "construction": "affirmative",
+       "elements": ["viajamos", "a", "Madrid", "mañana"],
+       "correct_order": ["mañana", "viajamos", "a", "Madrid"]}
+    ]
+  },
+  "B1": {
+    "vocab": [
+      {"id": "b1-v01", "question": "to decide",     "answer": "decidir"},
+      {"id": "b1-v02", "question": "advice",        "answer": "consejo"},
+      {"id": "b1-v03", "question": "advantage",     "answer": "ventaja"},
+      {"id": "b1-v04", "question": "to attempt",    "answer": "intentar"},
+      {"id": "b1-v05", "question": "experience",    "answer": "experiencia"}
+    ],
+    "sentences": [
+      {"id": "b1-s01", "construction": "affirmative",
+       "elements": ["decidí", "consejo", "tu", "seguir"],
+       "correct_order": ["decidí", "seguir", "tu", "consejo"]}
+    ]
+  },
+  "B2": {
+    "vocab": [
+      {"id": "b2-v01", "question": "to undertake",  "answer": "emprender"},
+      {"id": "b2-v02", "question": "issue",         "answer": "asunto"},
+      {"id": "b2-v03", "question": "to overcome",   "answer": "superar"},
+      {"id": "b2-v04", "question": "agreement",     "answer": "acuerdo"},
+      {"id": "b2-v05", "question": "to figure out", "answer": "averiguar"}
+    ],
+    "sentences": [
+      {"id": "b2-s01", "construction": "affirmative",
+       "elements": ["asunto", "el", "complicado", "resultó", "muy"],
+       "correct_order": ["el", "asunto", "resultó", "muy", "complicado"]}
+    ]
+  },
+  "C1": {
+    "vocab": [
+      {"id": "c1-v01", "question": "to convey",     "answer": "transmitir"},
+      {"id": "c1-v02", "question": "to entail",     "answer": "implicar"},
+      {"id": "c1-v03", "question": "subtlety",      "answer": "sutileza"},
+      {"id": "c1-v04", "question": "to grasp",      "answer": "captar"},
+      {"id": "c1-v05", "question": "evidence",      "answer": "indicio"}
+    ],
+    "sentences": [
+      {"id": "c1-s01", "construction": "affirmative",
+       "elements": ["matiz", "del", "captar", "discurso", "logró", "el"],
+       "correct_order": ["logró", "captar", "el", "matiz", "del", "discurso"]}
+    ]
+  },
+  "C2": {
+    "vocab": [
+      {"id": "c2-v01", "question": "endeavour",     "answer": "empeño"},
+      {"id": "c2-v02", "question": "to encompass",  "answer": "abarcar"},
+      {"id": "c2-v03", "question": "candour",       "answer": "candidez"},
+      {"id": "c2-v04", "question": "to refute",     "answer": "refutar"},
+      {"id": "c2-v05", "question": "to entrench",   "answer": "afianzar"}
+    ],
+    "sentences": [
+      {"id": "c2-s01", "construction": "affirmative",
+       "elements": ["argumento", "el", "refutado", "fue", "con", "candidez"],
+       "correct_order": ["el", "argumento", "fue", "refutado", "con", "candidez"]}
+    ]
+  }
+}

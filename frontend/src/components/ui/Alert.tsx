@@ -1,0 +1,17 @@
+interface AlertProps {
+  type: "error" | "success";
+  message: string;
+}
+
+export default function Alert({ type, message }: AlertProps) {
+  const isError = type === "error";
+  return (
+    <div className={`rounded-[12px] px-4 py-[10px] text-sm ${
+      isError
+        ? "bg-[var(--state-wrong-bg)] border border-[var(--state-wrong-bd)] text-[var(--state-wrong)]"
+        : "bg-[var(--state-correct-bg)] border border-[var(--state-correct-bd)] text-[var(--state-correct)]"
+    }`}>
+      {isError ? "⚠️" : "✅"} {message}
+    </div>
+  );
+}

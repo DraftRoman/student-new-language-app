@@ -1,0 +1,65 @@
+export declare const page = "flex-1 bg-[var(--bg-base)] min-h-full";
+export declare const main = "max-w-[760px] mx-auto px-5 py-10";
+export declare const loadingScreen = "min-h-[80vh] flex items-center justify-center bg-[var(--bg-base)]";
+export declare const loadingRing = "w-10 h-10 border-[3px] border-[var(--c-purple-ring)] border-t-[var(--c-purple)] rounded-full animate-spin";
+export declare const errorScreen = "min-h-[80vh] flex items-center justify-center flex-col gap-3 bg-[var(--bg-base)]";
+export declare const errorText = "text-[var(--text-secondary)] text-sm";
+export declare const header = "flex items-start justify-between mb-6";
+export declare const title = "bg-[var(--grad-purple-green)] bg-clip-text text-transparent text-[1.75rem] font-extrabold m-0";
+export declare const subtitle = "text-[var(--text-secondary)] mt-1 text-sm";
+export declare const scoreBox = "bg-[var(--bg-card)] border-[1.5px] border-[var(--border-subtle)] rounded-[16px] px-5 py-3 text-center";
+export declare const scoreNumber = "text-2xl font-extrabold text-[var(--text-primary)]";
+export declare const scoreLabel = "text-[0.7rem] text-[var(--text-secondary)] font-bold uppercase tracking-[0.05em]";
+export declare const legendRow = "flex gap-2 flex-wrap mb-5";
+export declare const legendPill = "flex items-center gap-[5px] rounded-full px-3 py-1 text-xs font-semibold";
+export declare const legendDot = "w-[6px] h-[6px] rounded-full inline-block";
+export declare const card = "bg-[var(--bg-card)] rounded-[24px] border-[1.5px] border-[var(--border-subtle)] p-7 shadow-[var(--shadow-card)]";
+export declare const progressRow = "flex items-center gap-3 mb-6";
+export declare const progressTrack = "flex-1 h-[6px] bg-[var(--border-subtle)] rounded-full overflow-hidden";
+export declare const progressFill = "h-full rounded-full transition-[width] duration-[400ms]";
+export declare const progressLabel = "text-xs text-[var(--text-secondary)] font-semibold whitespace-nowrap";
+export declare const promptBox = "mb-6 bg-[var(--c-purple-dim)] border border-[var(--c-purple-tint-bd)] rounded-[16px] px-5 py-4";
+export declare const promptEyebrow = "text-[0.65rem] font-bold uppercase tracking-[0.12em] text-[var(--c-purple-muted)] mb-1";
+export declare const promptText = "text-[1.15rem] font-bold text-[var(--text-primary)] m-0";
+export declare const sectionLabel = "text-[0.7rem] font-bold uppercase tracking-[0.1em] text-[var(--text-secondary)] mb-3";
+export declare const slotsArea = "mb-6";
+export declare const slot = "min-w-[64px] h-14 rounded-[12px] flex flex-col items-center justify-center gap-0.5 transition-all duration-150";
+export declare const slotEmpty = "text-[var(--text-tertiary)] text-xl";
+export declare const bankArea = "mb-6";
+export declare const bankPool = "min-h-16 bg-[var(--bg-surface)] rounded-[16px] p-3 flex flex-wrap gap-2 items-center";
+export declare const bankEmpty = "text-[var(--text-secondary)] text-[13px]";
+export declare const bankChip = "px-4 py-[10px] rounded-[12px] cursor-grab flex flex-col items-center gap-0.5 select-none transition-transform duration-100 hover:scale-105";
+export declare const hintBox = "bg-[var(--c-blue-dim)] border-[1.5px] border-[var(--c-blue-border)] rounded-[14px] px-[18px] py-3 mb-5 text-sm text-[var(--c-blue)]";
+export declare const actionsRow = "flex gap-3 mt-5";
+export declare const btnSecondary = "px-5 py-4 rounded-[16px] border-[1.5px] border-[var(--border-light)] bg-[var(--bg-surface)] cursor-pointer font-semibold text-sm text-[var(--text-secondary)]";
+export declare const btnCheckBase = "flex-1 px-6 py-4 rounded-[16px] border-none font-bold text-base transition-all duration-200";
+export declare const dotsRow = "flex justify-center gap-[6px] mt-5";
+export declare const dot = "h-2 rounded-full cursor-pointer transition-all duration-200";
+export declare const TYPE_STYLE: Record<string, {
+    bg: string;
+    border: string;
+    text: string;
+    label: string;
+}>;
+export declare const FALLBACK_STYLE: {
+    bg: string;
+    border: string;
+    text: string;
+    label: string;
+};
+export declare function getTokenStyle(type: string): {
+    bg: string;
+    border: string;
+    text: string;
+    label: string;
+};
+export declare const LEGEND: {
+    type: string;
+    label: string;
+}[];
+export declare function slotBorderStyle(border: string | null, isOver: boolean): {
+    border: string;
+    background: string;
+    outline: string;
+};
+export declare function dropZoneBorder(isOver: boolean): string;

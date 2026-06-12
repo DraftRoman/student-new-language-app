@@ -1,0 +1,9 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useState } from "react";
+import AuthForm from "../AuthForm";
+import TurtlePeek, {} from "../TurtlePeek";
+import { GlassCard, GradientText, ModalBackdrop } from "../ui";
+export default function AuthModal({ onClose }) {
+    const [turtleState, setTurtleState] = useState("idle");
+    return (_jsx(ModalBackdrop, { onClose: onClose, children: _jsxs(GlassCard, { className: "slide-up w-full max-w-[500px] pt-[60px] px-14 pb-14", onClick: e => e.stopPropagation(), children: [_jsx("div", { className: "absolute top-[-90px] left-1/2 -translate-x-1/2 pointer-events-none z-10", children: _jsx(TurtlePeek, { state: turtleState }) }), _jsx("button", { onClick: onClose, className: "absolute top-4 right-4 w-8 h-8 rounded-full bg-[var(--bg-surface)] border border-[var(--border-light)] cursor-pointer flex items-center justify-center text-[13px] text-[var(--text-secondary)] flex-shrink-0 transition-all duration-200 hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]", children: "\u2715" }), _jsxs("div", { className: "text-center mb-7", children: [_jsx(GradientText, { as: "h2", gradient: turtleState === "happy" ? "green_blue" : "purple_yellow_green", className: "text-[1.6rem] font-black m-0", children: turtleState === "happy" ? "🎉 Welcome!" : "Welcome back" }), _jsx("p", { className: "text-sm text-[var(--text-secondary)] mt-2 mb-0", children: "Sign in or create your free account" })] }), _jsx(AuthForm, { onPasswordFocus: () => setTurtleState("covering"), onPasswordBlur: () => setTurtleState(s => s === "happy" ? "happy" : "idle"), onPasswordTyping: () => setTurtleState(s => s === "happy" ? "happy" : "covering"), onSuccess: () => setTurtleState("happy"), onError: () => setTurtleState("wondered"), onTyping: () => setTurtleState(s => s === "wondered" ? "idle" : s) })] }) }));
+}

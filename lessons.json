@@ -1,0 +1,12 @@
+{
+
+  "lesson_1": {
+    "title": "Food Vocabulary",
+    "wordBases": ["Apple", "Bread", "Milk"]
+  },
+  "lesson_2": {
+    "title": "Travel Vocabulary",
+    "wordBases": ["Airport", "Hotel", "Passport"]
+  }
+
+}

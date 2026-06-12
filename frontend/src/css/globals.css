@@ -1,0 +1,253 @@
+:root {
+  /* Accent colours */
+  --c-purple:  #b169db;
+  --c-green:   #46cf71;
+  --c-yellow:  #f7d152;
+  --c-blue:    #0fbffa;
+  --c-red:     #f56565;
+  --c-orange:  #f97316;
+
+  /* Semantic states */
+  --state-correct:    #46cf71;
+  --state-correct-bg: rgba(70,207,113,0.12);
+  --state-correct-bd: rgba(70,207,113,0.40);
+  --state-wrong:      #f56565;
+  --state-wrong-bg:   rgba(245,101,101,0.12);
+  --state-wrong-bd:   rgba(245,101,101,0.40);
+  --state-selected:   #f7d152;
+  --state-selected-bg:rgba(247,209,82,0.15);
+  --state-selected-bd:rgba(247,209,82,0.35);
+
+  /* Brand gradients */
+  --grad-purple-green:   linear-gradient(-45deg, #b169db, #46cf71);
+  --grad-3color:         linear-gradient(-45deg, #b169db, #f7d152, #46cf71);
+  --grad-green-blue:     linear-gradient(-45deg, #46cf71, #0fbffa);
+  --grad-full:           linear-gradient(-45deg, #b169db 20%, #f7d152 45%, #46cf71 65%, #0fbffa 85%);
+  --grad-progress:       linear-gradient(90deg, #b169db, #46cf71);
+  --grad-nav-accent:     linear-gradient(90deg, transparent, #b169db, #46cf71, #f7d152, transparent);
+  --grad-rainbow-text:   linear-gradient(135deg, #f7971e, #ff6b6b, #c471ed, #12c2e9);
+
+  /* Theme tokens — dark (default) */
+  --bg-base:    #131417;
+  --bg-card:    #1e1e26;
+  --bg-surface: rgba(255,255,255,0.04);
+  --bg-hover:   rgba(255,255,255,0.06);
+
+  --text-primary:   rgba(255,255,255,0.90);
+  --text-secondary: rgba(255,255,255,0.40);
+  --text-tertiary:  rgba(255,255,255,0.20);
+
+  --border-subtle: rgba(255,255,255,0.07);
+  --border-light:  rgba(255,255,255,0.10);
+  --border-medium: rgba(255,255,255,0.15);
+
+  --nav-bg:      rgba(19,20,23,0.82);
+  --nav-border:  rgba(255,255,255,0.07);
+  --dropdown-bg: rgba(19,20,23,0.90);
+
+  --shadow-card:     0 4px 32px rgba(0,0,0,0.40);
+  --shadow-purple:   0 4px 24px rgba(177,105,219,0.45);
+  --shadow-modal:    0 32px 80px rgba(0,0,0,0.55);
+  --glass-shadow:    0 0 0 1px rgba(177,105,219,0.2), var(--shadow-modal), inset 0 1px 0 var(--border-subtle);
+  --dropdown-shadow: 0 0 0 1px rgba(177,105,219,0.15), 0 16px 48px rgba(0,0,0,0.25), inset 0 1px 0 var(--border-subtle);
+
+  /* Overlay colours */
+  --overlay-modal:  rgba(0,0,0,0.65);
+  --overlay-card:   rgba(0,0,0,0.18);
+  --overlay-glass:  rgba(0,0,0,0.35);
+
+  /* Radial glow orbs */
+  --glow-purple: radial-gradient(circle, rgba(177,105,219,0.18) 0%, transparent 70%);
+  --glow-green:  radial-gradient(circle, rgba(70,207,113,0.14) 0%, transparent 70%);
+  --glow-cta:    radial-gradient(ellipse, rgba(70,207,113,0.12) 0%, transparent 70%);
+
+  /* Purple tints — each opacity tier has a name */
+  --c-purple-dim:      rgba(177,105,219,0.08);   /* subtle bg (sentence prompt) */
+  --c-purple-tint:     rgba(177,105,219,0.15);   /* interactive bg, lang-pair card */
+  --c-purple-tint-bd:  rgba(177,105,219,0.20);   /* sentence prompt border */
+  --c-purple-border:   rgba(177,105,219,0.25);   /* lang-pair card border */
+  --c-purple-muted:    rgba(177,105,219,0.60);   /* input focus border */
+  --c-purple-ring:     rgba(177,105,219,0.25);   /* loading ring track */
+  --c-purple-focus:    rgba(177,105,219,0.12);   /* input focus shadow */
+  --c-purple-demo:     rgba(177,105,219,0.35);   /* landing demo cells */
+  --c-purple-demo-lo:  rgba(177,105,219,0.30);   /* landing demo cells (softer) */
+
+  /* Green tints */
+  --c-green-tint:    rgba(70,207,113,0.13);    /* feature icon bg */
+  --c-green-tint-md: rgba(70,207,113,0.15);    /* lang-pair card bg */
+  --c-green-border:  rgba(70,207,113,0.25);    /* lang-pair card border */
+  --c-green-demo:    rgba(70,207,113,0.35);    /* landing demo cells */
+  --c-green-demo-lo: rgba(70,207,113,0.30);    /* landing demo cells (softer) */
+
+  /* Blue tints */
+  --c-blue-dim:     rgba(15,191,250,0.08);    /* hint box bg */
+  --c-blue-tint:    rgba(15,191,250,0.13);    /* feature icon bg */
+  --c-blue-tint-md: rgba(15,191,250,0.15);    /* lang-pair card bg */
+  --c-blue-border:  rgba(15,191,250,0.25);    /* lang-pair card border */
+  --c-blue-demo-lo: rgba(15,191,250,0.30);    /* landing demo cells */
+
+  /* Yellow tints */
+  --c-yellow-tint:    rgba(247,209,82,0.13);   /* feature icon bg */
+  --c-yellow-tint-md: rgba(247,209,82,0.15);   /* lang-pair card bg */
+  --c-yellow-border:  rgba(247,209,82,0.25);   /* lang-pair card border */
+  --c-yellow-demo-lo: rgba(247,209,82,0.30);   /* landing demo cells */
+
+  /* Red tints */
+  --c-red-tint: rgba(245,101,101,0.12);        /* danger hover bg */
+
+  /* Game / dashboard card gradients */
+  --grad-card-game:         linear-gradient(135deg, #f7971e, #ff6b6b, #c471ed);
+  --grad-card-sentence:     linear-gradient(135deg, #7c3aed, #4f46e5, #2563eb);
+  --grad-btn-danger:        linear-gradient(135deg, #ef4444, #f97316);
+  --grad-avatar:            linear-gradient(to bottom right, #f7971e, #ff6b6b);
+  --grad-btn-primary:       linear-gradient(to right, #f7971e, #ff6b6b);
+  --shadow-btn-primary:     0 8px 30px rgba(247,151,30,0.35);
+  --shadow-btn-primary-hover: 0 12px 40px rgba(247,151,30,0.45);
+  --shadow-game-card:       0 10px 40px rgba(0,0,0,0.35);
+
+  /* Card CTA button (sits on top of a dark gradient bg — always needs contrast) */
+  --card-btn-bg:   rgba(255,255,255,0.92);
+  --card-btn-text: #111111;
+
+  /* Toggle knob */
+  --shadow-toggle-knob: 0 1px 4px rgba(0,0,0,0.25);
+
+  /* Navigation bar */
+  --shadow-nav: 0 1px 8px rgba(0,0,0,0.06);
+
+  /* Auth tab active */
+  --shadow-tab-active: 0 2px 12px rgba(177,105,219,0.40);
+
+  /* Game image card zoom shadow */
+  --shadow-image-hover: 0 8px 32px rgba(0,0,0,0.60);
+
+  /* Strong green border (lang select focus) */
+  --c-green-border-strong: rgba(70,207,113,0.50);
+
+  /* Badge */
+  --badge-bg:   #fff7ed;
+  --badge-bd:   #fed7aa;
+  --badge-text: #ea580c;
+  --badge-dot:  #fb923c;
+
+  /* Word-type token palette (grammar colour coding — intentionally fixed, not theme-aware) */
+  --token-noun-bg:    #eff6ff; --token-noun-bd:    #bfdbfe; --token-noun-text:    #3b82f6;
+  --token-verb-bg:    #f0fdf4; --token-verb-bd:    #bbf7d0; --token-verb-text:    #22c55e;
+  --token-adj-bg:     #fefce8; --token-adj-bd:     #fde68a; --token-adj-text:     #ca8a04;
+  --token-adv-bg:     #faf5ff; --token-adv-bd:     #e9d5ff; --token-adv-text:     #a855f7;
+  --token-pron-bg:    #fdf2f8; --token-pron-bd:    #fbcfe8; --token-pron-text:    #ec4899;
+  --token-prep-bg:    #f0fdfa; --token-prep-bd:    #99f6e4; --token-prep-text:    #14b8a6;
+  --token-conj-bg:    #fff7ed; --token-conj-bd:    #fed7aa; --token-conj-text:    #f97316;
+  --token-interj-bg:  #fef2f2; --token-interj-bd:  #fecaca; --token-interj-text:  #ef4444;
+  --token-other-bg:   #f9fafb; --token-other-bd:   #e5e7eb; --token-other-text:   #6b7280;
+}
+
+[data-theme="light"] {
+  --bg-base:    #f0f2f7;
+  --bg-card:    #ffffff;
+  --bg-surface: rgba(0,0,0,0.03);
+  --bg-hover:   rgba(0,0,0,0.05);
+
+  --text-primary:   rgba(10,10,20,0.88);
+  --text-secondary: rgba(10,10,20,0.48);
+  --text-tertiary:  rgba(10,10,20,0.28);
+
+  --border-subtle: rgba(0,0,0,0.07);
+  --border-light:  rgba(0,0,0,0.10);
+  --border-medium: rgba(0,0,0,0.14);
+
+  --nav-bg:      rgba(255,255,255,0.88);
+  --nav-border:  rgba(0,0,0,0.08);
+  --dropdown-bg: rgba(255,255,255,0.97);
+
+  --shadow-card:   0 4px 24px rgba(0,0,0,0.08);
+  --shadow-purple: 0 4px 24px rgba(177,105,219,0.30);
+  --shadow-modal:  0 32px 80px rgba(0,0,0,0.15);
+
+  /* Gradient overrides — darker stops so gradient text stays legible on light backgrounds */
+  --grad-purple-green:   linear-gradient(-45deg, #7c3aed, #16a34a);
+  --grad-3color:         linear-gradient(-45deg, #7c3aed, #b45309, #16a34a);
+  --grad-green-blue:     linear-gradient(-45deg, #16a34a, #0369a1);
+  --grad-full:           linear-gradient(-45deg, #7c3aed 20%, #b45309 45%, #16a34a 65%, #0369a1 85%);
+  --grad-progress:       linear-gradient(90deg, #7c3aed, #16a34a);
+  --grad-nav-accent:     linear-gradient(90deg, transparent, #7c3aed, #16a34a, #b45309, transparent);
+  --grad-rainbow-text:   linear-gradient(135deg, #b45309, #dc2626, #7c3aed, #0369a1);
+}
+
+/* ── Reset ───────────────────────────────────────────────── */
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    transition: background 0.25s, color 0.25s;
+  }
+
+  #root {
+    min-height: 100svh;
+  }
+}
+
+/* ── Keyframes ───────────────────────────────────────────── */
+@keyframes floatUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Global utility classes ──────────────────────────────── */
+.float-up  { animation: floatUp  0.6s ease both; }
+.fade-in   { animation: fadeIn   0.2s ease; }
+.slide-up  { animation: slideUp  0.3s ease; }
+
+.gradient-text {
+  background: var(--grad-rainbow-text);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 4s ease infinite;
+}
+
+.spinner-light {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-medium);
+  border-top-color: var(--text-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ── Vendor-only overrides (cannot be expressed in Tailwind) ── */
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-card) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  caret-color: var(--text-primary);
+}
