@@ -93,11 +93,20 @@ def _hydrate_attempts(rows: list[dict[str, Any]]) -> list[LevelAttempt]:
 
 
 class SupabasePlacementSessionRepository:
-    """Satisfies the `PlacementSessionRepository` protocol."""
+    """Satisfies the `PlacementSessionRepository` protocol.
+
+    Accepts an optional `client` (anything with the same chainable shape
+    as supabase-py's `Client`) so unit tests can inject an in-memory fake
+    without monkey-patching the module-level Supabase singleton. Default
+    is the real client wired in `app.shared.infrastructure.supabase_client`.
+    """
+
+    def __init__(self, client: Any | None = None) -> None:
+        self._client = client if client is not None else supabase
 
     def _fetch_attempts(self, session_id: str) -> list[LevelAttempt]:
         res = (
-            supabase.table(ATTEMPT_TABLE)
+            self._client.table(ATTEMPT_TABLE)
             .select("id, cefr_level, vocab_errors, sentence_errors, total_items, passed, attempted_at")
             .eq("session_id", session_id)
             .execute()
@@ -106,7 +115,7 @@ class SupabasePlacementSessionRepository:
 
     def _fetch_session_row(self, session_id: str) -> dict[str, Any] | None:
         res = (
-            supabase.table(SESSION_TABLE)
+            self._client.table(SESSION_TABLE)
             .select("id, user_id, status, current_level, recommended_level, "
                     "confirmed_level, started_at, completed_at")
             .eq("id", session_id)
@@ -125,7 +134,7 @@ class SupabasePlacementSessionRepository:
 
     def get_active_for_user(self, user_id: str) -> PlacementSession | None:
         res = (
-            supabase.table(SESSION_TABLE)
+            self._client.table(SESSION_TABLE)
             .select("id, user_id, status, current_level, recommended_level, "
                     "confirmed_level, started_at, completed_at")
             .eq("user_id", user_id)
@@ -153,20 +162,20 @@ class SupabasePlacementSessionRepository:
 
         if existing is None:
             payload["id"] = session.id  # use our pre-generated UUID, not Postgres's default
-            supabase.table(SESSION_TABLE).insert(payload).execute()
+            self._client.table(SESSION_TABLE).insert(payload).execute()
         else:
-            supabase.table(SESSION_TABLE).update(payload).eq("id", session.id).execute()
+            self._client.table(SESSION_TABLE).update(payload).eq("id", session.id).execute()
 
         # Persist any attempts that aren't already stored. The application
         # layer appends one attempt per save() call, but inserting only the
         # missing tail keeps the impl resilient to in-memory replays.
-        already_recorded = {a.level for a in _hydrate_attempts(
-            (supabase.table(ATTEMPT_TABLE)
-                .select("cefr_level")
-                .eq("session_id", session.id)
-                .execute()
-             ).data or []
-        )}
+        recorded_rows = (
+            self._client.table(ATTEMPT_TABLE)
+            .select("cefr_level")
+            .eq("session_id", session.id)
+            .execute()
+        ).data or []
+        already_recorded = {CefrLevel(r["cefr_level"]) for r in recorded_rows}
         new_rows: list[dict[str, Any]] = []
         for a in session.attempts:
             if a.level in already_recorded:
@@ -180,4 +189,4 @@ class SupabasePlacementSessionRepository:
                 "passed":          a.passed,
             })
         if new_rows:
-            supabase.table(ATTEMPT_TABLE).insert(new_rows).execute()
+            self._client.table(ATTEMPT_TABLE).insert(new_rows).execute()
