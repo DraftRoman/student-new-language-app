@@ -35,6 +35,10 @@ from app.modules.progress.presentation.dependencies import (
     get_sentence_progress_repository,
     get_word_progress_repository,
 )
+from app.modules.speaking.presentation.dependencies import (
+    get_attempt_repository,
+    get_stt_engine,
+)
 
 
 class FakeSentenceRepo:
@@ -95,6 +99,49 @@ class FakeIdentityProvider:
 
     def resolve(self, _token: str) -> AuthenticatedUser | None:
         return self.user
+
+
+class FakeSttEngine:
+    """In-memory SttEngine for endpoint tests — no model, no weights.
+
+    Set `recognized` to control the transcript, `error` to simulate bad audio
+    (ValidationError → 400), or `delay` to exceed the timeout budget (E3).
+    """
+
+    def __init__(
+        self,
+        recognized: str = "",
+        error: Exception | None = None,
+        delay: float = 0.0,
+    ) -> None:
+        self.recognized = recognized
+        self.error = error
+        self.delay = delay
+        self.calls: list[tuple[bytes, str, str]] = []
+
+    def transcribe(self, audio: bytes, audio_format: str, language: str) -> str:
+        import time
+
+        self.calls.append((audio, audio_format, language))
+        if self.delay:
+            time.sleep(self.delay)
+        if self.error is not None:
+            raise self.error
+        return self.recognized
+
+
+class FakeAttemptRepo:
+    """In-memory PronunciationAttemptRepository. Set `error` to simulate a
+    write failure (which must NOT break the learner's result)."""
+
+    def __init__(self, error: Exception | None = None) -> None:
+        self.saved: list = []
+        self.error = error
+
+    def save(self, attempt) -> None:
+        if self.error is not None:
+            raise self.error
+        self.saved.append(attempt)
 
 
 class FakePlacementSessionRepo:
@@ -174,6 +221,16 @@ def placement_content() -> FakeContentSource:
 
 
 @pytest.fixture
+def stt_engine() -> FakeSttEngine:
+    return FakeSttEngine()
+
+
+@pytest.fixture
+def attempt_repo() -> FakeAttemptRepo:
+    return FakeAttemptRepo()
+
+
+@pytest.fixture
 def client(
     sentence_repo: FakeSentenceRepo,
     dictionary_repo: FakeDictionaryRepo,
@@ -182,6 +239,8 @@ def client(
     identity_provider: FakeIdentityProvider,
     placement_session_repo: FakePlacementSessionRepo,
     placement_content: FakeContentSource,
+    stt_engine: FakeSttEngine,
+    attempt_repo: FakeAttemptRepo,
 ) -> Iterator[TestClient]:
     app.dependency_overrides[get_sentence_repository] = lambda: sentence_repo
     app.dependency_overrides[get_dictionary_repository] = lambda: dictionary_repo
@@ -190,6 +249,8 @@ def client(
     app.dependency_overrides[get_identity_provider] = lambda: identity_provider
     app.dependency_overrides[get_session_repository] = lambda: placement_session_repo
     app.dependency_overrides[get_content_source] = lambda: placement_content
+    app.dependency_overrides[get_stt_engine] = lambda: stt_engine
+    app.dependency_overrides[get_attempt_repository] = lambda: attempt_repo
     try:
         yield TestClient(app)
     finally:

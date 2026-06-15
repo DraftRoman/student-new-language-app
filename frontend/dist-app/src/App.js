@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Game from "./pages/Game";
 import SentenceGame from "./pages/SentenceGame";
 import Placement from "./pages/placement/Placement";
+import Speaking from "./pages/speaking/Speaking";
 import ProtectedLayout from "./components/organisms/ProtectedLayout";
 import AppNavbar from "./components/organisms/AppNavbar";
 function RootLayout() {
@@ -22,5 +23,5 @@ function ProtectedRoute({ children }) {
     return user ? _jsx(_Fragment, { children: children }) : _jsx(Navigate, { to: "/", replace: true });
 }
 export default function App() {
-    return (_jsx(ThemeProvider, { children: _jsx(AuthProvider, { children: _jsx(BrowserRouter, { children: _jsx(Routes, { children: _jsxs(Route, { element: _jsx(RootLayout, {}), children: [_jsx(Route, { path: "/", element: _jsx(Landing, {}) }), _jsxs(Route, { element: _jsx(ProtectedRoute, { children: _jsx(ProtectedLayout, {}) }), children: [_jsx(Route, { path: "/dashboard", element: _jsx(Dashboard, {}) }), _jsx(Route, { path: "/game", element: _jsx(Game, {}) }), _jsx(Route, { path: "/sentence-builder", element: _jsx(SentenceGame, {}) }), _jsx(Route, { path: "/onboarding/placement", element: _jsx(Placement, {}) })] }), _jsx(Route, { path: "*", element: _jsx(Navigate, { to: "/", replace: true }) })] }) }) }) }) }));
+    return (_jsx(ThemeProvider, { children: _jsx(AuthProvider, { children: _jsx(BrowserRouter, { children: _jsx(Routes, { children: _jsxs(Route, { element: _jsx(RootLayout, {}), children: [_jsx(Route, { path: "/", element: _jsx(Landing, {}) }), _jsxs(Route, { element: _jsx(ProtectedRoute, { children: _jsx(ProtectedLayout, {}) }), children: [_jsx(Route, { path: "/dashboard", element: _jsx(Dashboard, {}) }), _jsx(Route, { path: "/game", element: _jsx(Game, {}) }), _jsx(Route, { path: "/sentence-builder", element: _jsx(SentenceGame, {}) }), _jsx(Route, { path: "/speaking", element: _jsx(Speaking, {}) }), _jsx(Route, { path: "/onboarding/placement", element: _jsx(Placement, {}) })] }), _jsx(Route, { path: "*", element: _jsx(Navigate, { to: "/", replace: true }) })] }) }) }) }) }));
 }

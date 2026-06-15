@@ -7,8 +7,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+# libgomp1: OpenMP runtime required by CTranslate2 (Faster-Whisper backend).
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends build-essential curl \
+    && apt-get install -y --no-install-recommends build-essential curl libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .

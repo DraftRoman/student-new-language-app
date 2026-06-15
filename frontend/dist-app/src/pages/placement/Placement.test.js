@@ -42,6 +42,7 @@ describe("Placement orchestrator", () => {
     beforeEach(() => {
         vi.clearAllMocks();
         setAnalyticsSink(() => { });
+        window.localStorage.clear();
     });
     it("beginner path: 'no' assigns A1 and routes to /dashboard without showing the test", async () => {
         svc.answerPriorExperience.mockResolvedValue({ test_required: false, level: "A1" });
@@ -58,6 +59,26 @@ describe("Placement orchestrator", () => {
         await userEvent.click(await screen.findByRole("button", { name: /starting from scratch/i }));
         await waitFor(() => expect(screen.getByText("boom")).toBeInTheDocument());
         expect(screen.getByRole("button", { name: /start over/i })).toBeInTheDocument();
+    });
+    it("resume on refresh: persisted session re-enters vocab phase, skipping the gate (§5.1)", async () => {
+        window.localStorage.setItem("placement.session.v1", JSON.stringify({ sessionId: "s-resumed", level: "B1" }));
+        svc.getLevelBlock.mockResolvedValue(block("A2"));
+        renderAt();
+        // Vocab renders without the user touching the gate; resume completed.
+        await waitFor(() => {
+            expect(screen.getByRole("button", { name: "q1" })).toBeInTheDocument();
+        });
+        expect(svc.getLevelBlock).toHaveBeenCalledWith("s-resumed", "B1");
+        expect(screen.queryByText(/have you studied this language/i)).toBeNull();
+        expect(svc.answerPriorExperience).not.toHaveBeenCalled();
+    });
+    it("stale resume: a failure on resume clears storage and falls back to the gate", async () => {
+        window.localStorage.setItem("placement.session.v1", JSON.stringify({ sessionId: "expired", level: "A1" }));
+        svc.getLevelBlock.mockRejectedValue(new Error("placement session expired not found"));
+        renderAt();
+        expect(await screen.findByRole("button", { name: /starting from scratch/i }))
+            .toBeInTheDocument();
+        expect(window.localStorage.getItem("placement.session.v1")).toBeNull();
     });
     it("ladder happy path: yes → vocab → sentence → confirm; +1 override emits the override event", async () => {
         const overrideEvents = [];

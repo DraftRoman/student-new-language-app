@@ -6,7 +6,6 @@
 // Wiring later: replace `emit()` with a call into the SDK. The shapes here
 // are stable, so a one-line swap is enough.
 let sink = (name, payload) => {
-    // eslint-disable-next-line no-console
     console.info(`[analytics] ${name}`, payload);
 };
 // Test seam: swap the sink in unit tests.
