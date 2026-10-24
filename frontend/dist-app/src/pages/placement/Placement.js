@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { answerPriorExperience, confirmLevel, getLevelBlock, getResult, submitLevelAnswers, } from "../../lib/placementService";
 import { track } from "../../lib/analytics";
@@ -8,6 +8,7 @@ import VocabMatchStep from "./steps/VocabMatchStep";
 import SentenceBuildStep from "./steps/SentenceBuildStep";
 import ConfirmStep from "./steps/ConfirmStep";
 import { COPY } from "./copy";
+import * as storage from "./placementStorage";
 const initial = {
     phase: "gate",
     sessionId: null,
@@ -19,12 +20,64 @@ const initial = {
     busy: false,
     error: null,
 };
+/** Lazy-initialized so any persisted session boots the orchestrator
+ *  straight into the resume flow — no synchronous setState in the effect
+ *  (lint: react-hooks/set-state-in-effect). The effect's only job is the
+ *  async block fetch. */
+function initialFromStorage() {
+    const persisted = storage.load();
+    if (!persisted)
+        return initial;
+    return {
+        ...initial,
+        sessionId: persisted.sessionId,
+        level: persisted.level,
+        // Stay in `gate` while the effect fetches the block; render shows a
+        // spinner because no concrete phase predicate matches yet.
+        phase: "gate",
+        busy: true,
+    };
+}
 export default function Placement() {
     const navigate = useNavigate();
-    const [state, setState] = useState(initial);
+    const [state, setState] = useState(initialFromStorage);
     const fail = useCallback((err) => {
         const msg = err instanceof Error ? err.message : COPY.errors.generic;
+        // A failed call typically means a stale session id (404) or expired
+        // state (400). Clear so "Start over" actually starts over.
+        storage.clear();
         setState(s => ({ ...s, phase: "error", busy: false, error: msg }));
+    }, []);
+    // ── resume on mount (§5.1) ───────────────────────────────────────────
+    // initialFromStorage() above seeded sessionId/level/busy synchronously.
+    // This effect just performs the async block fetch and either lands the
+    // user in `vocab` or clears the stale state back to the gate.
+    useEffect(() => {
+        if (!state.sessionId || !state.level)
+            return;
+        let cancelled = false;
+        const sid = state.sessionId;
+        const lvl = state.level;
+        (async () => {
+            try {
+                const block = await getLevelBlock(sid, lvl);
+                if (cancelled)
+                    return;
+                setState(s => ({ ...s, phase: "vocab", block, vocabAnswers: {}, busy: false }));
+            }
+            catch {
+                // 404 / 400 → server no longer recognizes the session. Drop the
+                // stale id and let the user re-enter via the gate.
+                if (cancelled)
+                    return;
+                storage.clear();
+                setState(initial);
+            }
+        })();
+        return () => { cancelled = true; };
+        // sessionId/level only change as part of mount-time resume; intentional
+        // single-run effect.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     // ── gate → either fast-path to /dashboard or start the test ──────────
     const handleGate = useCallback(async (studiedBefore) => {
@@ -42,6 +95,7 @@ export default function Placement() {
                 return;
             }
             track("placement_test_started", { session_id: res.session_id });
+            storage.save({ sessionId: res.session_id, level: res.current_level });
             setState(s => ({
                 ...s,
                 phase: "vocab",
@@ -78,6 +132,7 @@ export default function Placement() {
             });
             if (res.next_level) {
                 const next = await getLevelBlock(state.sessionId, res.next_level);
+                storage.save({ sessionId: state.sessionId, level: res.next_level });
                 setState(s => ({
                     ...s,
                     phase: "vocab",
@@ -124,6 +179,7 @@ export default function Placement() {
                 confirmed_level: res.confirmed_level,
             });
             track("learning_started", { confirmed_level: res.confirmed_level, via: "placement" });
+            storage.clear();
             navigate("/dashboard", { replace: true });
         }
         catch (err) {

@@ -7,6 +7,7 @@ interface ButtonProps {
     disabled?: boolean;
     type?: "button" | "submit";
     className?: string;
+    ariaLabel?: string;
 }
-export default function Button({ children, onClick, variant, size, disabled, type, className, }: ButtonProps): import("react/jsx-runtime").JSX.Element;
+export default function Button({ children, onClick, variant, size, disabled, type, className, ariaLabel, }: ButtonProps): import("react/jsx-runtime").JSX.Element;
 export {};

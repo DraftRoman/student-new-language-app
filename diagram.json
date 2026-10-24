@@ -1,0 +1,214 @@
+{
+  "levels": [
+    {
+      "id": "lvl-a1",
+      "name": "A1"
+    }
+  ],
+  "topics": [
+    {
+      "id": "topic-family",
+      "name": "Family",
+      "level_id": "lvl-a1"
+    },
+    {
+      "id": "topic-actions",
+      "name": "Actions",
+      "level_id": "lvl-a1"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-mother",
+      "lemma": "mother",
+      "type": "noun",
+      "translations": {
+        "en": "mother",
+        "es": "madre",
+        "ca": "mare",
+        "ru": "мать"
+      },
+      "icon_url": "https://example.com/icons/woman.svg",
+      "audio_url": "https://tts.example.com/mother.mp3",
+      "example": {
+        "en": "My mother is at home",
+        "es": "Mi madre está en casa",
+        "ca": "La meva mare està a casa",
+        "ru": "Моя мать дома"
+      },
+      "topic_id": "topic-family",
+      "grammar": {
+        "gender": {
+            "en": "feminine",
+            "es": "feminine",
+            "ru": "feminine",
+            "ca": "feminine"
+        },
+        "plural": {
+          "en": "mothers",
+          "es": "madres",
+          "ca": "mares",
+          "ru": "матери"
+        }
+      }
+    },
+    {
+      "id": "word-go",
+      "lemma": "go",
+      "type": "verb",
+      "translations": {
+        "en": "go",
+        "es": "ir",
+        "ca": "anar",
+        "ru": "идти"
+      },
+      "icon_url": "https://example.com/icons/go.svg",
+      "audio_url": "https://tts.example.com/go.mp3",
+      "example": {
+        "en": "I go to work",
+        "es": "Voy al trabajo",
+        "ca": "Vaig a treballar",
+        "ru": "Я иду на работу"
+      },
+      "topic_id": "topic-actions",
+      "grammar":
+      {
+        "en": {
+        "present_forms": {
+            "1st_singular": "go",
+            "2nd_singular": "go",
+            "3rd_singular": "go",
+            "1st_plural": "go",
+            "2nd_plural": "go",
+            "3rd_plural": "go"
+        },
+        "past_forms": {
+            "1st_singular": "went",
+            "2nd_singular": "went",
+            "3rd_singular": "went",
+            "1st_plural": "went",
+            "2nd_plural": "went",
+            "3rd_plural": "went"
+        },
+        "future_forms": {
+            "1st_singular": "will go",
+            "2nd_singular": "will go",
+            "3rd_singular": "will go",
+            "1st_plural": "will go",
+            "2nd_plural": "will go",
+            "3rd_plural": "will go"
+        }
+    },
+        "es": {
+          "present_forms": {
+            "1st_singular": "voy",
+            "2nd_singular": "vas",
+            "3rd_singular": "va",
+            "1st_plural": "vamos",
+            "2nd_plural": "vais",
+            "3rd_plural": "van"
+        },
+        "past_forms": {
+            "1st_singular": "fui",
+            "2nd_singular": "fuiste",
+            "3rd_singular": "fue",
+            "1st_plural": "fuimos",
+            "2nd_plural": "fuisteis",
+            "3rd_plural": "fueron"
+        },
+        "future_forms": {
+            "1st_singular": "iré",
+            "2nd_singular": "irás",
+            "3rd_singular": "irá",
+            "1st_plural": "iremos",
+            "2nd_plural": "iréis",
+            "3rd_plural": "irán"
+        }
+    },
+        "ca": {
+          "present_forms": {
+            "1st_singular": "vaig",
+            "2nd_singular": "vas",
+            "3rd_singular": "va",
+            "1st_plural": "vam",
+            "2nd_plural": "vau",
+            "3rd_plural": "ven"
+        },
+        "past_forms": {
+            "1st_singular": "fui",
+            "2nd_singular": "fuiste",
+            "3rd_singular": "fue",
+            "1st_plural": "fuimos",
+            "2nd_plural": "fuisteis",
+            "3rd_plural": "fueron"
+        },
+        "future_forms": {
+            "1st_singular": "iré",
+            "2nd_singular": "irás",
+            "3rd_singular": "irá",
+            "1st_plural": "iremos",
+            "2nd_plural": "iréis",
+            "3rd_plural": "irán"
+        }
+    },
+        "ru": {
+          "present_forms": {
+            "1st_singular": "иду",
+            "2nd_singular": "идешь",
+            "3rd_singular": "идет",
+            "1st_plural": "идем",
+            "2nd_plural": "идете",
+            "3rd_plural": "идут"
+        },
+        "past_forms": {
+            "1st_singular": "шёл",
+            "2nd_singular": "шёл",
+            "3rd_singular": "шёл",
+            "1st_plural": "шли",
+            "2nd_plural": "шли",
+            "3rd_plural": "шли"
+        },
+        "future_forms": {
+            "1st_singular": "буду идти",
+            "2nd_singular": "будешь идти",
+            "3rd_singular": "будет идти",
+            "1st_plural": "будем идти",
+            "2nd_plural": "будете идти",
+            "3rd_plural": "будут идти"
+        }
+    }
+}
+},
+    {
+      "id": "word-big",
+      "lemma": "big",
+      "type": "adjective",
+      "translations": {
+        "en": "big",
+        "es": "grande",
+        "ca": "gran",
+        "ru": "большой"
+      },
+      "icon_url": "https://example.com/icons/big.svg",
+      "audio_url": "https://tts.example.com/big.mp3",
+      "example": {
+        "en": "This house is big",
+        "es": "Esta casa es grande",
+        "ca": "Aquesta casa és gran",
+        "ru": "Этот дом большой"
+      },
+      "topic_id": "topic-family",
+      "grammar": {
+        "comparative": "bigger",
+        "superlative": "biggest"
+      }
+    }
+  ],
+  "unit": {
+    "id": "unit-1",
+    "name": "Unit 1",
+    "level_id": "lvl-a1",
+    "topics": ["topic-family", "topic-actions"],
+    "words": ["word-mother", "word-go", "word-big"]
+  }
+}

@@ -14,6 +14,18 @@ type EventPayloads = {
   placement_level_override_used:        { session_id: string; recommended_level: string; chosen_level: string };
   placement_level_confirmed:            { session_id: string; confirmed_level: string };
   learning_started:                     { confirmed_level: string; via: "placement" | "default_a1" };
+
+  // Speaking / pronunciation (story §5). Client-owned events; the backend
+  // emits audio_submitted / stt_completed / stt_failed / pronunciation_scored.
+  speaking_exercise_shown:      { exercise_id: string; task_type: string; course_lang: string; target_len: number };
+  mic_permission_requested:     { platform: string };
+  mic_permission_granted:       { platform: string };
+  mic_permission_denied:        { platform: string };
+  recording_started:            { exercise_id: string; duration_ms: number };
+  recording_stopped:            { exercise_id: string; duration_ms: number };
+  recording_deleted:            { exercise_id: string; duration_ms: number };
+  recording_rerecorded:         { exercise_id: string; duration_ms: number };
+  speaking_exercise_completed:  { status: string; total_attempts: number };
 };
 
 type EventName = keyof EventPayloads;

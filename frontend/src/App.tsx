@@ -9,6 +9,7 @@ import Dashboard       from "./pages/Dashboard";
 import Game            from "./pages/Game";
 import SentenceGame    from "./pages/SentenceGame";
 import Placement       from "./pages/placement/Placement";
+import Speaking        from "./pages/speaking/Speaking";
 import ProtectedLayout from "./components/organisms/ProtectedLayout";
 import AppNavbar       from "./components/organisms/AppNavbar";
 
@@ -61,6 +62,7 @@ export default function App() {
               <Route path="/dashboard"            element={<Dashboard />} />
               <Route path="/game"                 element={<Game />} />
               <Route path="/sentence-builder"     element={<SentenceGame />} />
+              <Route path="/speaking"             element={<Speaking />} />
               <Route path="/onboarding/placement" element={<Placement />} />
             </Route>
 
