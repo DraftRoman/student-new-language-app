@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { CefrLevel, VocabItem } from "../../../lib/placementService";
 import { COPY } from "../copy";
+import { useSpeechSynthesis } from "../../../hooks/useSpeechSynthesis";
 
 interface Props {
   level:    CefrLevel;
@@ -41,6 +42,7 @@ export default function VocabMatchStep({ level, items, pageSize, onComplete }: P
   const [pageIdx, setPageIdx]   = useState(0);
   const [answers, setAnswers]   = useState<Record<string, string>>({});
   const [pageState, setPageState] = useState<PageState>(() => initialPage(pageSize));
+  const { speak } = useSpeechSynthesis();
 
   const pageItems = useMemo(
     () => items.slice(pageIdx * pageSize, pageIdx * pageSize + pageSize),
@@ -86,6 +88,7 @@ export default function VocabMatchStep({ level, items, pageSize, onComplete }: P
 
   const handleQ = (qIdx: number) => {
     if (pageState.matched[qIdx] != null) return;
+    speak(pageItems[qIdx].question, "en-US");
     if (pageState.selectedA != null) {
       tryMatch(qIdx, pageState.selectedA);
       return;
@@ -95,6 +98,7 @@ export default function VocabMatchStep({ level, items, pageSize, onComplete }: P
 
   const handleA = (aIdx: number) => {
     if (Object.values(pageState.matched).includes(aIdx)) return;
+    speak(shuffledAnswers[aIdx].answer, "es-ES");
     if (pageState.selectedQ != null) {
       tryMatch(pageState.selectedQ, aIdx);
       return;

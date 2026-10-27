@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { CefrLevel, SentenceItem } from "../../../lib/placementService";
 import { COPY } from "../copy";
+import { useSpeechSynthesis } from "../../../hooks/useSpeechSynthesis";
 
 interface Props {
   level: CefrLevel;
@@ -17,6 +18,7 @@ export default function SentenceBuildStep({ level, items, onComplete }: Props) {
   const [idx, setIdx]       = useState(0);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
   const [placed, setPlaced]   = useState<string[]>([]);
+  const { speak } = useSpeechSynthesis();
 
   const current = items[idx];
   const bank = useMemo(() => {
@@ -42,7 +44,10 @@ export default function SentenceBuildStep({ level, items, onComplete }: Props) {
     setPlaced([]);
   };
 
-  const placeWord = (w: string) => setPlaced(p => [...p, w]);
+  const placeWord = (w: string) => {
+    speak(w, "es-ES");
+    setPlaced(p => [...p, w]);
+  };
   const removeWord = (i: number) => setPlaced(p => p.filter((_, ix) => ix !== i));
   const reset = () => setPlaced([]);
 

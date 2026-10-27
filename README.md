@@ -20,8 +20,9 @@ Repositories: `origin` = `DraftRoman/student-new-language-app`,
 ## 1. Current stage
 
 **Stage: late prototype / alpha.** The backend is solid and well tested. The
-frontend has working games, but the build is broken, some tests fail, and two
-of the four features can't be reached from the UI. It is not deployable yet.
+frontend has working games, but the production build is broken, some tests fail,
+and two of the four features can't be reached from the UI. It runs locally
+(confirmed 2026-10-24 against a fresh Supabase project), but it is not deployable yet.
 
 Checked on 2026-10-23 against a clean copy of the `task/init` branch:
 
@@ -37,16 +38,17 @@ Checked on 2026-10-23 against a clean copy of the `task/init` branch:
 
 ### Features
 
-"Works" means the code and backend tests are in place; I did not click through it in a browser.
+"Works" means the code and backend tests are in place. Sign up and the word match
+game were also checked by hand in the browser on 2026-10-24.
 
 | Feature | Route | Backend | Frontend | Status |
 |---|---|---|---|---|
 | Sign up / log in | modal on `/` | token check (`identity`) | Supabase JS SDK | ✅ Works |
-| Word match game (en-es, en-ru, es-ru, emoji/image modes) | `/game` | `GET /api/game/wordmatch` | `Game.tsx` | ✅ Works |
-| Sentence builder (drag and drop) | `/sentence-builder` | `GET /api/game/sentences` | `SentenceGame.tsx` | ✅ Works |
+| Word match game (en-es, en-ru, es-ru, emoji/image modes) | `/game` | `GET /api/game/wordmatch` | `Game.tsx` | ✅ Works (image modes need the pictures uploaded) |
+| Sentence builder (drag and drop) | `/sentence-builder` | `GET /api/game/sentences` | `SentenceGame.tsx` | ⚠️ Code works, but the `sentences` table is empty in the new database |
 | Spaced-repetition progress | (in the games) | `/api/progress/*` | `progressService.ts` | ✅ Works |
-| Placement test (A1–C2) | `/onboarding/placement` | `/api/placement/*` | `pages/placement/` | ⚠️ Code done, DB migration not applied, no link in UI, uses fixture content |
-| Pronunciation check | `/speaking` | `POST /api/v1/pronunciation/check` | `pages/speaking/` | ⚠️ Code done, DB migration unconfirmed, no link in UI, demo exercise only |
+| Placement test (A1–C2) | `/onboarding/placement` | `/api/placement/*` | `pages/placement/` | ⚠️ Code done, no link in UI, uses fixture content |
+| Pronunciation check | `/speaking` | `POST /api/v1/pronunciation/check` | `pages/speaking/` | ⚠️ Code done, no link in UI, demo exercise only |
 | Lessons / courses | none | none | none | ❌ Not started (`lessons.json` is a stub) |
 | Dashboard shows user's level | none | none | none | ❌ Not started |
 
@@ -56,60 +58,109 @@ Checked on 2026-10-23 against a clean copy of the `task/init` branch:
 
 ### Prerequisites
 
-- Python **3.12** and Node **20+** (22 recommended)
-- A Supabase project, with its URL, **anon** key and **service-role** key
+- Python **3.12** (the project's `.venv` uses it; don't run with a global 3.13/3.14)
+- Node **20+** (22 recommended)
+- A Supabase project (see 2.1)
 
-### 2.1 Configure environment
+### 2.1 Set up Supabase (one time)
+
+The original Supabase project was lost, so the database is now created from
+SQL files in `db/`. Follow **[db/SUPABASE_SETUP.md](db/SUPABASE_SETUP.md)**. In short:
+
+1. Create a new project on supabase.com.
+2. SQL Editor → run `db/01_setup.sql` (all 7 tables, security rules, `imagesTurtle` bucket).
+3. SQL Editor → run `db/02_seed_dictionary.sql` (362 starter words).
+4. Authentication → keep Email on; for development turn off "Confirm email".
+5. Upload the pictures to the `imagesTurtle` bucket under `family/` (see `seed-images.js`).
+
+`db/01_setup.sql` already includes `backend/migrations/001` and `002`, so you
+don't need to run those separately. `db/DATABASE_RECOVERY.md` explains how the
+schema was rebuilt and what data is still missing (sentences, example sentences).
+
+### 2.2 Configure environment
+
+Keys are in Supabase → **Project Settings → API Keys**. There are two kinds and
+they go in different files:
+
+| Key | Public or private | File and variable |
+|---|---|---|
+| `sb_publishable_...` or legacy `anon` | public | `frontend/.env` → `VITE_SUPABASE_ANON_KEY` |
+| legacy `service_role` (`eyJ...`) | **private** | `backend/.env` → `SUPABASE_SERVICE_KEY` |
 
 ```bash
 # backend/.env
 cp backend/.env.example backend/.env
-# then set SUPABASE_URL and SUPABASE_SERVICE_KEY (service-role key)
+#   SUPABASE_URL=https://<project-id>.supabase.co
+#   SUPABASE_SERVICE_KEY=<legacy service_role key, starts with eyJ>
 
 # frontend/.env
 cp frontend/.env.example frontend/.env
-# then set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (anon key)
+#   VITE_SUPABASE_URL=https://<project-id>.supabase.co
+#   VITE_SUPABASE_ANON_KEY=<publishable or anon key>
 ```
 
-Never commit the `.env` files (they are already in `.gitignore`).
+- The project ID is in the dashboard address bar (`/dashboard/project/<id>`).
+- No quotes or spaces around `=`.
+- Use the **legacy** `service_role` key for the backend. The backend only accepts
+  keys that look like a JWT (`eyJ...`). With an `sb_secret_...` key it silently
+  falls back to an empty stub database.
+- Never put the private key in the frontend, and never commit `.env` files
+  (they are in `.gitignore`).
+- Vite reads `.env` only at startup, so restart `npm run dev` after editing it.
 
-### 2.2 Apply the database migrations (one time)
+### 2.3 Run the backend (terminal 1)
 
-In Supabase Studio → SQL Editor, run both files in order. They are idempotent
-(safe to re-run):
-
-1. `backend/migrations/001_placement_tables.sql`
-2. `backend/migrations/002_pronunciation_attempts.sql`
-
-The base tables (`dictionary`, `sentences`, `user_progress`, `word_progress`,
-`images`) have no migration in the repo, so they must already exist in your
-Supabase project (they were created for the original `project-languages`).
-
-### 2.3 Run the backend
+Always run it **from the `backend` folder** with the virtual environment active,
+otherwise you get `ModuleNotFoundError: No module named 'app'`.
 
 ```bash
 cd backend
-python -m venv .venv
-# Windows:  .venv\Scripts\activate      macOS/Linux:  source .venv/bin/activate
-pip install -r requirements.txt
+python -m venv .venv                 # first time only
+# activate it:
+#   Windows PowerShell / CMD:  .venv\Scripts\activate
+#   Git Bash on Windows:       source .venv/Scripts/activate
+#   macOS / Linux:             source .venv/bin/activate
+pip install -r requirements.txt      # first time only
 uvicorn app.main:app --reload --port 8000
 ```
 
-- Health check: http://localhost:8000/api/health
-- API docs: http://localhost:8000/docs
-- The first pronunciation check downloads the Whisper `base` model (~150 MB)
-  and uses ~1 GB RAM. Set `STT_WARMUP_ON_STARTUP=true` to load it on startup.
+Leave this terminal open. Check it with:
 
-### 2.4 Run the frontend
+- http://127.0.0.1:8000/api/health → `{"status":"ok"}`
+- http://127.0.0.1:8000/docs → all endpoints
+- http://127.0.0.1:8000/api/game/wordmatch?language=en-es → 5 word pairs from Supabase
 
-> ⚠️ **First apply fix #1 below** (the Vite proxy points at the old Node
-> server on port 3001). Without it, placement and pronunciation calls fail.
+Opening http://127.0.0.1:8000/ itself gives `404 Not Found`. That is normal.
+
+The first pronunciation check downloads the Whisper `base` model (~150 MB) and
+uses ~1 GB RAM. Set `STT_WARMUP_ON_STARTUP=true` to load it on startup.
+
+### 2.4 Run the frontend (terminal 2)
+
+In a second terminal, while the backend keeps running:
 
 ```bash
 cd frontend
-npm install
+npm install          # first time only
 npm run dev          # http://localhost:5173
 ```
+
+The Vite dev server forwards every `/api/...` request to the backend at
+`http://127.0.0.1:8000` (`server.proxy` in `frontend/vite.config.ts`). Use
+`127.0.0.1`, not `localhost`: on Windows, Node may resolve `localhost` to IPv6
+while uvicorn listens on IPv4.
+
+### Troubleshooting
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `502 (Bad Gateway)` on `/api/...` in the browser, and `ECONNREFUSED 127.0.0.1:8000` in the Vite terminal | Backend isn't running | Start it (2.3) and keep its terminal open |
+| `502` and `ECONNREFUSED ...:3001` | Old proxy setting | Set the proxy target to `http://127.0.0.1:8000` and restart `npm run dev` |
+| `Invalid API key` / `401` on `.../auth/v1/token` when logging in | Wrong key in `frontend/.env` (the private key, an old project's key, or Vite not restarted) | Use the publishable/anon key, then restart `npm run dev` |
+| Vite starts on 5174 instead of 5173 | Something else (usually the Docker frontend) is on 5173 | `docker compose down`, then restart `npm run dev` |
+| `container name "/language-app-frontend" is already in use` | Old container with the same name (also used by `project-languages`) | `docker rm -f language-app-frontend` |
+| `ModuleNotFoundError: No module named 'app'` | uvicorn started outside `backend/` or without `.venv` | `cd backend`, activate `.venv`, run again |
+| Sentence Builder says "No sentences found" | `sentences` table is empty in the new database | Add sentences (see `db/DATABASE_RECOVERY.md`) |
 
 ### 2.5 Tests and checks
 
@@ -129,8 +180,9 @@ npm run build
 
 ### 2.6 Docker
 
-`docker-compose.yml` currently only defines the **frontend** service. See fix #2
-to add the backend.
+Not recommended yet. `docker-compose.yml` only defines the **frontend**
+service, so the app doesn't work in Docker (see fix #2). Use the two terminals
+above. If you started it, stop it with `docker compose down`.
 
 ---
 
@@ -147,12 +199,13 @@ backend/
       progress/                  spaced repetition (Mastery 0–5, review in 2^level days)
       placement/                 placement test (A1–C2 ladder, scoring)
       speaking/                  pronunciation check (faster-whisper + WER scoring)
-  migrations/                    SQL to paste into Supabase
+  migrations/                    SQL to paste into Supabase (also included in db/01_setup.sql)
   tests/                         pytest, fakes injected via dependency_overrides
 frontend/
   src/pages/                     Landing, Dashboard, Game, SentenceGame, placement/, speaking/
   src/components/                atoms/, organisms/, ui/
   src/lib/                       API clients (progress, placement, pronunciation, analytics)
+db/                              full Supabase setup: 01_setup.sql, 02_seed_dictionary.sql, setup + recovery guides
 docs/, stories/, roles/          product stories, placement decisions and handoff notes
 report.md                        pronunciation feature documentation (Russian)
 server.js, package.json,
@@ -171,11 +224,10 @@ See `CLAUDE.md` for the full conventions.
 
 ### 4.1 Fix first (blocking)
 
-1. **Point the Vite proxy at the FastAPI backend.** `frontend/vite.config.ts`
-   proxies `/api` to `http://localhost:3001`, which is the *old* Node
-   `server.js`. That server has no placement or pronunciation endpoints, so
-   those features fail in dev. Change it to
-   `target: process.env.VITE_API_PROXY_TARGET ?? 'http://localhost:8000'`.
+1. ~~**Point the Vite proxy at the FastAPI backend.**~~ ✅ Done (2026-10-24):
+   `frontend/vite.config.ts` now proxies `/api` to `http://127.0.0.1:8000`
+   instead of the old Node server on 3001. A possible follow-up is to read
+   `VITE_API_PROXY_TARGET` so Docker can point it at `http://backend:8000`.
 2. **Add the backend to `docker-compose.yml`.** Only `frontend` is defined. Add
    a `backend` service (build `./backend`, port 8000, `env_file: backend/.env`)
    and set `VITE_API_PROXY_TARGET=http://backend:8000` on the frontend.
@@ -195,12 +247,15 @@ See `CLAUDE.md` for the full conventions.
 6. **Fix the 8 TypeScript errors and 9 ESLint errors**: type-only imports in
    `AuthContext.tsx`, unused `idx` in `Game.tsx`, type the fetch result in
    `SentenceGame.tsx`, remove `any`s, add the missing `react-hooks` plugin rule.
-7. **Apply both SQL migrations** in Supabase (section 2.2). Until then, placement
-   sessions are saved to a local JSON file.
+7. ~~**Apply the SQL migrations.**~~ ✅ Done: the new Supabase project was created
+   from `db/01_setup.sql`, which includes both migrations.
+7a. **Restore the sentence data.** The `sentences` table and `dictionary.example`
+   are empty after the database loss. Look for `seed-sentences.js` in the
+   `project-languages` history or write new sentences.
 
 ### 4.2 Clean up
 
-8. **Archive the legacy Node code.** Move `server.js`, root `package.json` /
+8. **Archive the legacy Node code.** Now that `vite.config.ts` points at 8000, nothing uses it. Move `server.js`, root `package.json` /
    `package-lock.json`, `dictionary*.json` and `dictionary.js` into a `legacy/`
    folder (or drop them; they live on in `project-languages`). They confuse
    which backend is real.
