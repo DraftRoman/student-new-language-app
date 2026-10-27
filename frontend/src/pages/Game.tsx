@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSpeechSynthesis } from "../hooks/useSpeechSynthesis";
 import { getSpeechLang } from "../utils/getSpeechLang";
 import { useAuth } from "../context/AuthContext";
@@ -20,7 +21,11 @@ const LANGUAGES: { value: Language; label: string }[] = [
   { value: "image-es", label: "Image → Spanish"   },
 ];
 
-const TOTAL_PAIRS = 5;
+const TOTAL_PAIRS   = 5;
+const TOTAL_SCREENS = 5;
+// Ask for more words than one screen needs so each screen can skip words
+// already shown earlier in the same game (the API caps limit at 20).
+const FETCH_LIMIT   = 20;
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -32,7 +37,7 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 async function fetchPairs(language: Language): Promise<{ pairs: Pair[]; imageMode: ImageMode }> {
-  const res  = await fetch(`/api/game/wordmatch?language=${language}&limit=${TOTAL_PAIRS}`);
+  const res  = await fetch(`/api/game/wordmatch?language=${language}&limit=${FETCH_LIMIT}`);
   const data = await res.json();
   if (!res.ok) throw new Error(data.error ?? "Failed to load words");
   return { pairs: data.pairs as Pair[], imageMode: data.imageMode as ImageMode };
@@ -53,6 +58,7 @@ function ImageCard({ url, state }: { url: string; state: BtnState }) {
 export default function Game() {
   const { speak } = useSpeechSynthesis();
   const { user }  = useAuth();
+  const navigate  = useNavigate();
 
   const [language,     setLanguage]     = useState<Language>("en-es");
   const [imageMode,    setImageMode]    = useState<ImageMode>(null);
@@ -66,12 +72,32 @@ export default function Game() {
   const [aStates,      setAStates]      = useState<BtnState[]>(Array(TOTAL_PAIRS).fill("idle"));
   const [loading,      setLoading]      = useState(true);
   const [error,        setError]        = useState<string | null>(null);
+  const [screen,       setScreen]       = useState(0);
+  const [mistakes,     setMistakes]     = useState(0);
+  const [finished,     setFinished]     = useState(false);
+  // Questions already shown in this game, so later screens show new words.
+  const usedQuestions = useRef<Set<string>>(new Set());
 
   const startRound = useCallback(async (lang: Language, resetScore = false) => {
     setLoading(true);
     setError(null);
+    // Clear the finished screen right away so the "screen complete" timer
+    // can't fire twice while the next words load.
+    setPairs([]);
+    setMatchedPairs(0);
+    if (resetScore) {
+      usedQuestions.current = new Set();
+      setScreen(0);
+      setMistakes(0);
+      setFinished(false);
+    }
     try {
-      const { pairs: newPairs, imageMode: mode } = await fetchPairs(lang);
+      const { pairs: fetched, imageMode: mode } = await fetchPairs(lang);
+      const fresh = fetched.filter(p => !usedQuestions.current.has(p.question));
+      // Top up with repeats only if the dictionary has run out of new words.
+      const newPairs = [...fresh, ...fetched.filter(p => usedQuestions.current.has(p.question))]
+        .slice(0, TOTAL_PAIRS);
+      newPairs.forEach(p => usedQuestions.current.add(p.question));
       setPairs(newPairs);
       setAnswers(shuffle(newPairs));
       setImageMode(mode);
@@ -91,11 +117,20 @@ export default function Game() {
   useEffect(() => { startRound(language, true); }, [language, startRound]);
 
   useEffect(() => {
-    if (matchedPairs === TOTAL_PAIRS && TOTAL_PAIRS > 0) {
-      const t = setTimeout(() => startRound(language), 1500);
+    if (pairs.length > 0 && matchedPairs === pairs.length) {
+      const t = setTimeout(() => {
+        if (screen + 1 >= TOTAL_SCREENS) {
+          setFinished(true);
+        } else {
+          setScreen(s => s + 1);
+          startRound(language);
+        }
+      }, 1500);
       return () => clearTimeout(t);
     }
-  }, [matchedPairs, language, startRound]);
+  }, [matchedPairs, pairs.length, screen, language, startRound]);
+
+  const accuracy = score + mistakes > 0 ? Math.round((score / (score + mistakes)) * 100) : 0;
 
   const questionsAreImages = imageMode === "question";
   const answersAreImages   = imageMode === "answer";
@@ -113,6 +148,7 @@ export default function Game() {
     } else {
       const lemma = questionsAreImages ? pairs[qIdx].question : pairs[qIdx].question;
       if (user) saveWordResult(lemma, language, false).catch(() => {});
+      setMistakes(m => m + 1);
       // flash wrong on the second-clicked side
       setQStates(prev => prev.map((s, idx) => idx === qIdx && s !== "correct" ? "wrong" : s));
       setAStates(prev => prev.map((s, idx) => idx === aIdx && s !== "correct" ? "wrong" : s));
@@ -138,7 +174,7 @@ export default function Game() {
     setSelectedQ(i);
     setSelectedA(null);
     setQStates(prev => prev.map((s, idx) => s === "correct" ? s : idx === i ? "selected" : "idle"));
-    setAStates(prev => prev.map((s, idx) => s === "correct" ? s : "idle"));
+    setAStates(prev => prev.map(s => s === "correct" ? s : "idle"));
   };
 
   const handleAnswer = (i: number) => {
@@ -153,7 +189,7 @@ export default function Game() {
     setSelectedA(i);
     setSelectedQ(null);
     setAStates(prev => prev.map((s, idx) => s === "correct" ? s : idx === i ? "selected" : "idle"));
-    setQStates(prev => prev.map((s, idx) => s === "correct" ? s : "idle"));
+    setQStates(prev => prev.map(s => s === "correct" ? s : "idle"));
   };
 
   return (
@@ -164,6 +200,9 @@ export default function Game() {
           <h2 className={S.title}>Word Match</h2>
         </div>
         <div className={S.score}>🏆 Score: {score}</div>
+        {!finished && (
+          <p className={S.screenCounter}>Screen {screen + 1} / {TOTAL_SCREENS}</p>
+        )}
         <select
           className={S.select}
           value={language}
@@ -173,7 +212,24 @@ export default function Game() {
         </select>
       </header>
 
-      {loading ? (
+      {finished ? (
+        <div className={S.summary}>
+          <div className="text-[48px]">{accuracy >= 80 ? "🏆" : accuracy >= 50 ? "🎉" : "💪"}</div>
+          <h3 className={S.summaryTitle}>Well done!</h3>
+          <p className={S.summaryText}>
+            You matched <b>{score}</b> words with <b>{mistakes}</b> {mistakes === 1 ? "mistake" : "mistakes"}.
+          </p>
+          <p className={S.summaryAccuracy}>Accuracy: {accuracy}%</p>
+          <div className={S.summaryButtons}>
+            <button className={S.summaryBtnSecondary} onClick={() => startRound(language, true)}>
+              🔄 Start over
+            </button>
+            <button className={S.summaryBtnPrimary} onClick={() => navigate("/sentence-builder")}>
+              🧩 Go to sentences
+            </button>
+          </div>
+        </div>
+      ) : loading ? (
         <div className={S.spinner}>
           <div className={S.ring} />
           <p>Loading words…</p>
@@ -225,9 +281,13 @@ export default function Game() {
 
           </div>
 
-          {matchedPairs === TOTAL_PAIRS && (
+          {pairs.length > 0 && matchedPairs === pairs.length && (
             <div className={S.roundComplete}>
-              <p className={S.roundText}>🎉 Round complete! Next round loading…</p>
+              <p className={S.roundText}>
+                {screen + 1 >= TOTAL_SCREENS
+                  ? "🎉 Last screen done! Counting your score…"
+                  : "🎉 Screen complete! Next words loading…"}
+              </p>
             </div>
           )}
         </>
